@@ -1,6 +1,6 @@
 // Get the radio buttons container element
 const radioButtonsWrapElem = document.getElementById("radioButtonsWrapElem");
-
+let myChart;
 // Function to fetch data from an API endpoint and create radio buttons dynamically
 function fetchDataAndCreateRadioButtons() {
     fetch('/api/vote_options') // Replace '/api/options' with your API endpoint
@@ -27,69 +27,71 @@ function fetchDataAndCreateRadioButtons() {
 fetchDataAndCreateRadioButtons();
 // Function to update the chart with latest vote counts
 function updateChart() {
-    fetch('/api/read') // Replace '/api/vote_counts' with your vote counts API endpoint
+    fetch('/api/read') // Replace '/api/read' with your vote counts API endpoint
         .then(response => response.json())
         .then(data => {
             // Assuming the data returned is in the format { option: count }
             const xValues = Object.keys(data);
             const yValues = Object.values(data);
 
-            // Get the chart canvas context
-            const ctx = document.getElementById('myChart').getContext('2d');
+            if (!myChart) {
+                // Create a new Chart.js chart if it doesn't exist
+                const ctx = document.getElementById('myChart').getContext('2d');
+                myChart = new Chart(ctx, {
+                    type: "horizontalBar",
+                    data: {
+                        labels: xValues,
+                        datasets: [{
+                            backgroundColor: "rgba(59,159,138,1.0)",
+                            data: yValues
+                        }]
+                    },
+                    options: {}
+                });
+            } else {
+                // Update the existing chart data with fetched data
+                myChart.data.labels = xValues;
+                myChart.data.datasets[0].data = yValues;
 
-            // Check if chart already exists
-
-
-            // Create a new Chart.js chart with updated vote counts
-            window.myChart = new Chart(ctx, {
-                type: "horizontalBar",
-                data: {
-                    labels: xValues,
-                    datasets: [{
-                        backgroundColor: "rgba(59,159,138,1.0)",
-                        data: yValues
-                    }]
-                },
-                options: {}
-            });
+                // Update the chart
+                myChart.update();
+            }
         })
         .catch(error => {
             console.error('Error updating chart:', error);
         });
 }
-
 // Function to handle vote submission
 document.getElementById('radioButtonsWrapElem').addEventListener('click', function(event) {
-    event.preventDefault();
+    const target = event.target;
+    if (target.tagName === 'INPUT' && target.type === 'radio') {
+        const voteValue = target.value;
 
-    // Get the selected value from the form
-    const formData = new FormData();
-    const voteValue = formData.get('vote');
-
-    // Make a POST request to send the vote
-    fetch('/api/write', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ vote: voteValue })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok.');
-        }
-        // Handle successful response
-        // For instance, show a success message to the user
-        alert('Vote submitted successfully!');
-        // Update the chart after a successful vote
-        updateChart();
-    })
-    .catch(error => {
-        // Handle error scenarios
-        console.error('There was a problem with the fetch operation:', error);
-        // Display an error message to the user
-        alert('Failed to submit vote. Please try again.');
-    });
+        // Make a POST request to send the vote
+        fetch('/api/write', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ vote: voteValue })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            }
+            // Handle successful response
+            // For instance, show a success message to the user
+            //alert('Vote submitted successfully!');
+            // Update the chart after a successful vote
+            updateChart();
+        })
+        .catch(error => {
+            // Handle error scenarios
+            console.error('There was a problem with the fetch operation:', error);
+            // Display an error message to the user
+            alert('Failed to submit vote. Please try again.');
+        });
+    }
 });
 
 
