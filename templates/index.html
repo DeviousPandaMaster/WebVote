@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Voting</title>
+    <link rel="stylesheet" href="/static/style.css" /> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+</head>
+<body>
+    <h1>Votes</h1>
+    <p1>Choices</p1>
+    <div id="radioButtonsWrapElem">
+        <!-- Radio buttons will be populated dynamically by JavaScript -->
+    </div>
+    <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+    <script src="{{ url_for('static', filename='vote.js') }}"></script>
+</body>
+</html>
