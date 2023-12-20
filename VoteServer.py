@@ -7,7 +7,6 @@ app.config["DEBUG"] = True
 
 VoteOptions = []
 Votes = {}
-
 x = True
 while x:
     print('Enter x if done')
@@ -22,15 +21,20 @@ while x:
 def home():
     return render_template('index.html')
 
+@app.route('/api/vote_options', methods=['GET'])
+def api_vote_options():
+    return VoteOptions
+
 @app.route('/api/read', methods=['GET'])
 def api_read():
     return Votes
 
-@app.route("/api/<write>", methods=['PUT'])
+@app.route("/api/<write>", methods=['POST'])
 def api_write(write):
     vote = request.json['vote']
     num = Votes.get(vote)
-    num = num + 1 
+    print(num)
+    num = int(num) + 1 
     Votes.update({vote: num})
     return 200
 
