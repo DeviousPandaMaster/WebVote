@@ -3,7 +3,7 @@ const radioButtonsWrapElem = document.getElementById("radioButtonsWrapElem");
 
 // Function to fetch data from an API endpoint and create radio buttons dynamically
 function fetchDataAndCreateRadioButtons() {
-    fetch('/api/options') // Replace '/api/options' with your API endpoint
+    fetch('/api/vote_options') // Replace '/api/options' with your API endpoint
         .then(response => response.json())
         .then(data => {
             // Assuming the data returned is an array of options
@@ -23,9 +23,11 @@ function fetchDataAndCreateRadioButtons() {
         });
 }
 
+// Call the functions initially to create radio buttons and update the chart
+fetchDataAndCreateRadioButtons();
 // Function to update the chart with latest vote counts
 function updateChart() {
-    fetch('/api/vote_counts') // Replace '/api/vote_counts' with your vote counts API endpoint
+    fetch('/api/read') // Replace '/api/vote_counts' with your vote counts API endpoint
         .then(response => response.json())
         .then(data => {
             // Assuming the data returned is in the format { option: count }
@@ -36,9 +38,7 @@ function updateChart() {
             const ctx = document.getElementById('myChart').getContext('2d');
 
             // Check if chart already exists
-            if (window.myChart) {
-                window.myChart.destroy(); // Destroy the existing chart to refresh it
-            }
+
 
             // Create a new Chart.js chart with updated vote counts
             window.myChart = new Chart(ctx, {
@@ -59,15 +59,15 @@ function updateChart() {
 }
 
 // Function to handle vote submission
-document.getElementById('votingForm').addEventListener('submit', function(event) {
+document.getElementById('radioButtonsWrapElem').addEventListener('click', function(event) {
     event.preventDefault();
 
     // Get the selected value from the form
-    const formData = new FormData(this);
+    const formData = new FormData();
     const voteValue = formData.get('vote');
 
     // Make a POST request to send the vote
-    fetch('/api/vote', {
+    fetch('/api/write', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -92,8 +92,7 @@ document.getElementById('votingForm').addEventListener('submit', function(event)
     });
 });
 
-// Call the functions initially to create radio buttons and update the chart
-fetchDataAndCreateRadioButtons();
+
 // Function to repeatedly update the chart with latest vote counts every second
 function updateChartRepeatedly() {
     // Call updateChart initially to load the chart
