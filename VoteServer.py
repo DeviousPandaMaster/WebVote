@@ -33,9 +33,8 @@ def api_read():
 def api_write(write):
     vote = request.json['vote']
     num = Votes.get(vote)
-    print(num)
     num = int(num) + 1 
     Votes.update({vote: num})
-    return 200
+    return "ok"
 
 app.run()
