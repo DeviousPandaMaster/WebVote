@@ -41,12 +41,30 @@ function updateChart() {
                     type: "horizontalBar",
                     data: {
                         labels: xValues,
-                        datasets: [{
-                            backgroundColor: "rgba(59,159,138,1.0)",
-                            data: yValues
-                        }]
+                        datasets: [
+                            {
+                                label: "Votes",
+                                backgroundColor: "rgba(59,159,138,1.0)",
+                                data: yValues
+                            },
+                            {
+                                label: "Invisible",
+                                backgroundColor: "rgba(0,0,0,0)",
+                                data: yValues.map(() => 0)
+                            }
+                        ]
                     },
-                    options: {}
+                    options: {
+                        indexAxis: 'y',
+                        scales: {
+                            x: {
+                                beginAtZero: true // For X-axis
+                            },
+                            y: {
+                                suggestedMin: 0 // Ensure Y-axis starts at zero
+                            }
+                        }
+                    }
                 });
             } else {
                 // Update the existing chart data with fetched data
