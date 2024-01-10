@@ -23,6 +23,10 @@ function fetchDataAndCreateRadioButtons() {
         });
 }
 
+const gradientArray = new Gradient()
+  .setColorGradient("0affc6", "fc03c2")
+  .getColors();
+
 // Call the functions initially to create radio buttons and update the chart
 fetchDataAndCreateRadioButtons();
 // Function to update the chart with latest vote counts
@@ -44,7 +48,7 @@ function updateChart() {
                         datasets: [
                             {
                                 label: "Votes",
-                                backgroundColor: "rgba(59,159,138,1.0)",
+                                backgroundColor: gradientArray,
                                 data: yValues
                             },
                             {
